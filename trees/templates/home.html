@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% load leaflet_tags %}
+{% load static %}
+	
+
+
+<ul>
+{% for tree in trees %}
+    <li>{{tree.tree_description}}</li>
+{% endfor %}
+</ul>
+	
+
+
+	<div class='jumbotron'>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Navbar</a>
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Dropdown
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Disabled</a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+ </nav>
+
+
+ {% leaflet_map "mapid" callback="map_init" %}
+
+	
+	
+ 
+  <hr class="my-4">
+ 
+  <!--<p class="lead">
+    
+    <button class='btn btn-primary btn-lg' id="addTree"> + <img src='{% static "LemonTree3_svg.svg" %}' height="100px" width="150px" /></button>
+  </p>-->
+  <div class="row">
+  <div class="card col-md-4" style="width: 18rem;">
+  	<a href="#" class="btn btn-light" id="addTree"><img class="card-img-top" src='{% static "LemonTree3_svg.svg" %}' height="100px" width="150px"  alt="Card image cap"></a>
+  <div class="card-body">
+  	<h5 class="card-title">Share a Great Tree</h5>
+    <p class="card-text">Have you found a great tree for climbing? Add this to the map for others.</p>
+    <!--<a href="#" class="btn btn-success" id="saveTree">Put Roots Down</a>-->
+  </div>
+</div>
+  <div class="card col-md-4" style="width: 18rem;">
+  <img class="card-img-top" src='{% static "LemonTree3_svg.svg" %}' height="100px" width="150px"  alt="Card image cap">
+  <div class="card-body">
+    <h5 class="card-title">Share a Great Tree</h5>
+    <p class="card-text">Have you found a great tree for climbing? Add this to the map for others.</p>
+    <a href="#" class="btn btn-primary">Place tree</a>
+  </div>
+</div>
+ <div class="card col-md-4" style="width: 18rem;">
+  <img class="card-img-top" src='{% static "LemonTree3_svg.svg" %}' height="100px" width="150px"  alt="Card image cap">
+  <div class="card-body">
+    <h5 class="card-title">Share a Great Tree</h5>
+    <p class="card-text">Have you found a great tree for climbing? Add this to the map for others.</p>
+    <a href="#" class="btn btn-primary">Place tree</a>
+
+  </div>
+</div>
+  <hr class="my-4">
+
+
+
+</div>
+
+
+</div>
+
+<!-- form to enter tree details-->
+
+<div class="modal" tabindex="-1"  id="exampleModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tell us about your tree</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+    			
+    				{% crispy form %}
+    				
+  				</form>
+    			
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+	var coordinates;
+
+
+
+	$("#mapid").addClass('rcorners2');
+
+	var myMap;
+	var treeIcon = L.icon({
+    iconUrl: '{% static "LemonTree3_svg.svg" %}',
+    
+
+    iconSize:     [50, 55], // size of the icon
+    //shadowSize:   [30, 40], // size of the shadow
+    iconAnchor:   [25, 55], // point of the icon which will correspond to marker's location
+    //shadowAnchor: [4, 55],  // the same for the shadow
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+	});
+
+	$("#addTree").click(function(event){
+		console.log("Add Tree")
+		if ("geolocation" in navigator) {
+  		navigator.geolocation.getCurrentPosition(function(position) {
+  	
+  				
+  				marker = L.marker([position.coords.latitude, position.coords.longitude], {icon:treeIcon, 
+  					draggable:true}).addTo(myMap);
+  				    $('input#id_lat').val(position.coords.latitude.toFixed(10));
+							$('input#id_lng').val(position.coords.longitude.toFixed(10));
+  				marker.on("drag", function(e) {
+    				var marker = e.target;
+    				var position = marker.getLatLng();
+    				  
+    				myMap.panTo(new L.LatLng(position.lat, position.lng));
+					});
+					marker.on("dragend", function(e) {
+    				var marker = e.target;
+    				var position = marker.getLatLng();
+    				coordinates = position.coords
+						console.log(position)
+						$('input#id_lat').val(position.lat.toFixed(10));
+						$('input#id_lng').val(position.lng.toFixed(10));	
+    				
+    				myMap.panTo(new L.LatLng(position.lat, position.lng));
+					});
+					popUpContent = '<h4>Click tree when done</h4><a href="#" class="btn btn-success" id="saveTree" data-toggle="modal" data-target="#exampleModal"><b>Put Roots Down</b></a>'
+					marker.bindPopup(popUpContent).openPopup();
+  				
+  				myMap.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
+			});
+
+
+} else {
+  console.log("NO")
+}
+	})
+
+	
+
+	function map_init(map, options){
+	myMap = map
+	// load trees
+	{% for tree in trees %}
+	 marker = L.marker([{{tree.lat}},{{tree.lng}}], {icon:treeIcon}).addTo(map)
+   marker.bindTooltip("{{tree.tree_name}}").openTooltip(); 
+	{% endfor %}
+	
+
+	}
+
+
+	
+</script>
+{% endblock content %}

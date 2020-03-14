@@ -1,0 +1,40 @@
+{% load leaflet_tags %}
+{% load static %}
+
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<!-- templates/base.html -->
+<head>
+ 
+  <link rel="stylesheet" type="text/css" href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
+  <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.3.0"></script>
+{% leaflet_js %}
+{% leaflet_css %}
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script type="text/javascript" src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
+ <style>   
+    #mapid { height: 600px; width:400px;border-radius: 25px;
+  border: 1px solid #73AD21; margin-top:25px;}
+    
+.rcorners2 {
+  border-radius: 25px;
+  border: 2px solid #73AD21;
+  
+ }
+ 
+
+</style>
+ </head>
+
+<div class="container">
+{% block content %}
+{% endblock %}
+
+</div>
+
+
+
+
